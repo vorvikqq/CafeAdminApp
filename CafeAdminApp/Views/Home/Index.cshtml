@@ -2,7 +2,29 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+<ul class="navbar-nav flex-grow-1">
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Manage Categories</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Manage Orders</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Prices" asp-action="Index">Manage Prices</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Products" asp-action="Index">Manage Products</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="StockItems" asp-action="Index">Manage StockItems</a>
+    </li
+     <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Invoices" asp-action="Index">Manage Invoices</a>
+    </li>
+     <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Checks" asp-action="Index">Manage Checks</a>
+    </li>
+     
+</ul>
+
