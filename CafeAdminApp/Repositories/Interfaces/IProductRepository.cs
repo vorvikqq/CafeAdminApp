@@ -10,5 +10,6 @@ namespace CafeAdminApp.Repositories.Interfaces
         Task UpdateAsync(int id, Product product);
         Task DeleteAsync(int id);
         bool IsExist(int id);
+        Task<List<Product>> GetExpiredProductsAsync();
     }
 }

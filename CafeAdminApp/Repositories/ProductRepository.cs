@@ -33,7 +33,7 @@ namespace CafeAdminApp.Repositories
         {
             var existingProduct = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
 
-            if(existingProduct is not null)
+            if (existingProduct is not null)
             {
                 existingProduct.ProductName = product.ProductName;
                 existingProduct.ManufactureDate = product.ManufactureDate;
@@ -57,6 +57,15 @@ namespace CafeAdminApp.Repositories
         public bool IsExist(int id)
         {
             return _context.Products.Any(p => p.ProductId == id);
+        }
+
+        /// <summary>
+        /// Отримати список продуктів, у яких закінчився термін придатності
+        /// </summary>
+        /// <returns> список Product, у яких закінчився термін придатності </returns>
+        public async Task<List<Product>> GetExpiredProductsAsync()
+        {
+            return await _context.Products.Where(p => p.ConsumptionDate < DateTimeOffset.UtcNow).ToListAsync();
         }
 
     }

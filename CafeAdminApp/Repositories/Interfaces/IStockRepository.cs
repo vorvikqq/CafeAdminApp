@@ -9,5 +9,6 @@ namespace CafeAdminApp.Repositories.Interfaces
         Task AddAsync(StockItem stockItem);
         Task UpdateAsync(StockItem stockItem);
         Task DeleteAsync(int id);
+        Task<int> SetExpiredProductsAsync(List<int> expiredProductIds);
     }
 }
