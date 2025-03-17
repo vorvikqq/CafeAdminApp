@@ -45,5 +45,25 @@ namespace CafeAdminApp.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        /// <summary>
+        /// Змінити isProsporchka на true для продуктів, у яких закінчився срок споживання та вони ще не були позначені як просрочені
+        /// </summary>
+        /// <param name="expiredProductIds"> Айді продуктів, у яких закінчився срок споживання</param>
+        /// <returns> Кількість предметів Стоку, у яких було змінено isProsrochka = true</returns>
+        public async Task<int> SetExpiredProductsAsync(List<int> expiredProductIds)
+        {
+            var expiredStockItems = await _context.Stock.
+                Where(s => expiredProductIds.Contains(s.ProductId) && !s.IsProsrochka).ToListAsync();
+
+            if (!expiredStockItems.Any()) 
+                return 0;
+
+            expiredStockItems.ForEach(s => s.IsProsrochka = true);
+            await _context.SaveChangesAsync();
+
+            return expiredStockItems.Count;
+        }
+
     }
 }

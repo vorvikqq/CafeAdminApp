@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Списання просрочених продуктів";
+}
+
+<h1 class="text-center">Списання просрочених продуктів</h1>
+
+<div class="text-center">
+    <form method="post" asp-action="SetExpirationFlag">
+        <button type="submit" class="btn btn-danger mt-3">Списати просрочені продукти</button>
+    </form>
+
+    @if (ViewData["Message"] != null)
+    {
+        <div class="alert @(ViewData["Message"].ToString() == "0" ? "alert-danger" : "alert-success") mt-3">
+            @ViewData["Message"]
+        </div>
+    }
+</div>
