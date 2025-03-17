@@ -27,12 +27,12 @@ namespace CafeAdminApp.Data
 
             modelBuilder.Entity<InvoicePriceItem>()
                 .HasOne(ip => ip.Invoice)
-                .WithMany(i => i.InvoicePrices) // Важливо! Додаємо зв’язок до колекції
+                .WithMany(i => i.InvoicePrices) 
                 .HasForeignKey(ip => ip.InvoiceId);
 
             modelBuilder.Entity<InvoicePriceItem>()
                 .HasOne(ip => ip.Price)
-                .WithMany(p => p.InvoicePrices) // Важливо! Додаємо зв’язок до колекції
+                .WithMany(p => p.InvoicePrices) 
                 .HasForeignKey(ip => ip.PriceId);
 
             // Many-to-Many: Order <-> Price через OrderPriceItem
@@ -41,60 +41,59 @@ namespace CafeAdminApp.Data
 
             modelBuilder.Entity<OrderPriceItem>()
                 .HasOne(op => op.Order)
-                .WithMany(o => o.OrderPrices) // Важливо! Додаємо зв’язок до колекції
+                .WithMany(o => o.OrderPrices)
                 .HasForeignKey(op => op.OrderId);
 
             modelBuilder.Entity<OrderPriceItem>()
                 .HasOne(op => op.Price)
-                .WithMany(p => p.OrderPrices) // Важливо! Додаємо зв’язок до колекції
+                .WithMany(p => p.OrderPrices) 
                 .HasForeignKey(op => op.PriceId);
 
-            // Переконатися, що всі поля DateTimeOffset зберігаються в UTC
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.CreateDate)
                 .HasColumnType("timestamp with time zone")
                 .HasConversion(
-                    v => v.UtcDateTime,  // Переводимо в UTC
-                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо знову на DateTimeOffset з часовою зоною UTC
+                    v => v.UtcDateTime,  
+                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero)
                 );
 
             modelBuilder.Entity<Order>()
                 .Property(o => o.OrderDate)
                 .HasColumnType("timestamp with time zone")
                 .HasConversion(
-                    v => v.UtcDateTime,  // Переводимо в UTC
-                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо в UTC
+                    v => v.UtcDateTime,
+                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) 
                 );
 
             modelBuilder.Entity<Price>()
                 .Property(p => p.Date)
                 .HasColumnType("timestamp with time zone")
                 .HasConversion(
-                    v => v.UtcDateTime,  // Переводимо в UTC
-                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо в UTC
+                    v => v.UtcDateTime, 
+                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) 
                 );
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.ManufactureDate)
                 .HasColumnType("timestamp with time zone")
                 .HasConversion(
-                    v => v.UtcDateTime,  // Переводимо в UTC
-                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо в UTC
+                    v => v.UtcDateTime,  
+                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) 
                 );
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.ConsumptionDate)
                 .HasColumnType("timestamp with time zone")
                 .HasConversion(
-                    v => v.UtcDateTime,  // Переводимо в UTC
-                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо в UTC
+                    v => v.UtcDateTime,  
+                    v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) 
                 );
             modelBuilder.Entity<Check>()
                .Property(p => p.SaleDate)
                .HasColumnType("timestamp with time zone")
                .HasConversion(
-                   v => v.UtcDateTime,  // Переводимо в UTC
-                   v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) // Перетворюємо в UTC
+                   v => v.UtcDateTime, 
+                   v => new DateTimeOffset(DateTime.SpecifyKind(v, DateTimeKind.Utc), TimeSpan.Zero) 
                );
         }
     }
