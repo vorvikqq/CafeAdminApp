@@ -29,9 +29,18 @@ namespace CafeAdminApp.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(int id, Product product)
         {
-            _context.Products.Update(product);
+            var existingProduct = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+
+            if(existingProduct is not null)
+            {
+                existingProduct.ProductName = product.ProductName;
+                existingProduct.ManufactureDate = product.ManufactureDate;
+                existingProduct.ConsumptionDate = product.ConsumptionDate;
+                existingProduct.CategoryId = product.CategoryId;
+            }
+
             await _context.SaveChangesAsync();
         }
 
@@ -43,6 +52,11 @@ namespace CafeAdminApp.Repositories
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public bool IsExist(int id)
+        {
+            return _context.Products.Any(p => p.ProductId == id);
         }
 
     }

@@ -2,7 +2,7 @@
 
 namespace CafeAdminApp.Repositories.Interfaces
 {
-    public interface ICategoriyRepository
+    public interface ICategoryRepository
     {
         Task<List<Category>> GetAllCategoriesAsync();
         Task<Category> GetCategoryByIdAsync(int categoryId);

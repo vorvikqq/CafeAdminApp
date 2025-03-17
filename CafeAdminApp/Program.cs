@@ -1,4 +1,6 @@
 using CafeAdminApp.Data;
+using CafeAdminApp.Repositories;
+using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<ICheckRepository, CheckRepository>();
+builder.Services.AddTransient<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<IPriceRepository, PriceRepository>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IStockRepository, StockRepository>();
+
+
+
 
 
 var app = builder.Build();

@@ -7,7 +7,8 @@ namespace CafeAdminApp.Repositories.Interfaces
         Task<List<Product>> GetAllAsync();
         Task<Product?> GetByIdAsync(int id);
         Task AddAsync(Product product);
-        Task UpdateAsync(Product product);
+        Task UpdateAsync(int id, Product product);
         Task DeleteAsync(int id);
+        bool IsExist(int id);
     }
 }

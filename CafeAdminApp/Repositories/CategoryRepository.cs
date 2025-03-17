@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeAdminApp.Repositories
 {
-    public class CategoryRepository : ICategoriyRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly ApplicationDbContext _context;
 
