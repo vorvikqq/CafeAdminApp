@@ -17,6 +17,8 @@ namespace CafeAdminApp.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<StockItem> Stock { get; set; }
 
+
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
