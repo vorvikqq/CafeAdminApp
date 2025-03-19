@@ -1,5 +1,8 @@
 ﻿namespace CafeAdminApp.Models
 {
+    /// <summary>
+    /// Модель для зберігання данних які потрібні для представлення інвойсу
+    /// </summary>
     public class InvoiceProductDetails
     {
         public string ProductName { get; set; }

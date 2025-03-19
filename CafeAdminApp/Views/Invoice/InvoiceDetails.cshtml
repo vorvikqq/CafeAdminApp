@@ -4,7 +4,16 @@
 
 @if (!Model.Any())
 {
-    <p class="text-center">@ViewData["Message"]</p>
+    @if (ViewData["Message"] != null)
+    {
+        <p class="text-center">@ViewData["Message"]</p>
+        if (ViewData["Message"] == "Немає товарів у цьому інвойсі.")
+        {
+            <div class="text-center mt-3">
+                <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardInvoice()">Відхилити інвойс</button>
+            </div>
+        }
+    }
 }
 else
 {

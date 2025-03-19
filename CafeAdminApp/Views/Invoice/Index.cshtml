@@ -10,6 +10,12 @@
 {
     <div class="alert alert-info">@TempData["Message"]</div>
 }
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-success">
+    <p class="text-center">@ViewData["Message"]</p>
+    </div>
+}
 
 <table class="table">
     <thead>
