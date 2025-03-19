@@ -33,7 +33,7 @@ namespace CafeAdminApp.Controllers
 
             // Отримання даних звітів
             model.NetProfit = await _reportRepository.GetNetProfitReport(model.StartDate, model.EndDate);
-            model.BestSellingProducts = await _reportRepository.GetTopSellingProducts(model.StartDate, model.EndDate);
+            model.TopSellingProducts = await _reportRepository.GetTopSellingProducts(model.StartDate, model.EndDate);
             model.StockAvailability = await _reportRepository.GetStockReport();
             model.SpoiledGoods = await _reportRepository.GetSpoiledProductsReport();
 

@@ -65,7 +65,7 @@
     <!-- Звіт про найбільш продавані товари -->
     <div class="tab-pane fade" id="topProducts">
         <h3>Звіт про найбільш продавані товари</h3>
-        @if (Model.BestSellingProducts.Any())
+        @if (Model.TopSellingProducts != null && Model.TopSellingProducts.Any())
         {
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -77,7 +77,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var (item, index) in Model.BestSellingProducts.Select((p, i) => (p, i + 1)))
+                        @foreach (var (item, index) in Model.TopSellingProducts.Select((p, i) => (p, i + 1)))
                         {
                             <tr>
                                 <td>@index</td>
@@ -98,7 +98,7 @@
     <!-- Звіт про наявність товарів -->
     <div class="tab-pane fade" id="stockReport">
         <h3>Звіт про наявність товарів</h3>
-        @if (Model.StockAvailability.Any())
+        @if (Model.StockAvailability != null && Model.StockAvailability.Any())
         {
             <div class="table-responsive">
                 <table class="table table-bordered">
@@ -129,7 +129,7 @@
     <!-- Звіт про баланс зіпсованих товарів -->
     <div class="tab-pane fade" id="spoiledBalance">
         <h3>Звіт про баланс зіпсованих товарів</h3>
-        @if (Model.SpoiledGoods.Any())
+        @if (Model.SpoiledGoods != null && Model.SpoiledGoods.Any())
         {
             <div class="table-responsive">
                 <table class="table table-bordered">
