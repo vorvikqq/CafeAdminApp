@@ -1,0 +1,82 @@
+﻿@model List<InvoiceProductDetails>
+
+<h2 class="text-center">Деталі інвойсу "ID: @ViewData["InvoiceId"]"</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-center">@ViewData["Message"]</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Назва товару</th>
+                <th>Ціна (₴)</th>
+                <th>Кількість</th>
+                <th>Сума (₴)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                double totalInvoicePrice = 0;
+            }
+            @foreach (var item in Model)
+            {
+                var productTotal = item.Price * item.Quantity;
+                totalInvoicePrice += productTotal;
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>@productTotal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="text-right">Загальна вартість товарів у інвойсі: @totalInvoicePrice ₴</h4>
+
+    <div class="text-center mt-3">
+        <button class="btn" style="background-color: #28a745; color: white;" onclick="acceptInvoice()">Підтвердити інвойс</button>
+        <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardInvoice()">Відхилити інвойс</button>
+    </div>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function acceptInvoice() {
+        Swal.fire({
+            title: 'Підтвердження',
+            text: 'Ви впевнені, що хочете прийняти цей інвойс?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Так',
+            cancelButtonText: 'Ні',
+            confirmButtonColor: '#28a745',  // зелений
+            cancelButtonColor: '#dc3545',   // червоний
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "@Url.Action("AcceptInvoice", "Invoice", new { invoiceId = ViewData["InvoiceId"] })";
+            }
+        });
+    }
+
+    function discardInvoice() {
+        Swal.fire({
+            title: 'Відхилити інвойс',
+            text: 'Ви впевнені, що хочете відхилити цей інвойс?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Так',
+            cancelButtonText: 'Ні',
+            сonfirmButtonColor: '#28a745',  // зелений
+            cancelButtonColor: '#dc3545',   // червоний
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "@Url.Action("DiscardInvoice", "Invoice", new { invoiceId = ViewData["InvoiceId"] })";
+            }
+        });
+    }
+</script>
