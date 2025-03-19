@@ -11,5 +11,6 @@ namespace CafeAdminApp.Repositories.Interfaces
         Task DeleteAsync(int id);
         bool IsExist(int id);
         Task<List<Product>> GetExpiredProductsAsync();
+        Task DeleteManyByIdsAsync(List<int> productsIdsToDelete);
     }
 }

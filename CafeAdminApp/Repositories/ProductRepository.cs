@@ -68,5 +68,15 @@ namespace CafeAdminApp.Repositories
             return await _context.Products.Where(p => p.ConsumptionDate < DateTimeOffset.UtcNow).ToListAsync();
         }
 
+        public async Task DeleteManyByIdsAsync(List<int> productsIdsToDelete)
+        {
+            var productsToDelete = await _context.Products
+                .Where(p => productsIdsToDelete.Contains(p.ProductId))
+                .ToListAsync();
+
+            _context.Products.RemoveRange(productsToDelete);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

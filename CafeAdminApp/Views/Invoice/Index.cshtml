@@ -1,0 +1,40 @@
+﻿@model List<CafeAdminApp.Models.Invoice>
+
+@{
+    ViewData["Title"] = "Прийняття товарів";
+}
+
+<h1 class="text-center">Прийняття товарів</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-success">
+    <p class="text-center">@ViewData["Message"]</p>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Інвойс ID</th>
+            <th>Дата створення</th>
+            <th>Деталі</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invoice in Model)
+        {
+            <tr>
+                <td>@invoice.InvoiceId</td>
+                <td>@invoice.CreateDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>
+                    <a asp-action="InvoiceDetails" asp-route-invoiceId="@invoice.InvoiceId" class="btn btn-primary">Переглянути</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

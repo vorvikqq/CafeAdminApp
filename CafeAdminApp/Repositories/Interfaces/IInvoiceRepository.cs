@@ -5,6 +5,10 @@ namespace CafeAdminApp.Repositories.Interfaces
     public interface IInvoiceRepository
     {
         Task<List<Invoice>> GetAllAsync();
+        Task<List<Invoice>> GetAllInvoicesAsync();
         Task<Invoice?> GetByIdAsync(int id);
+        Task<List<int>> GetAllPricesForInvoiceAsync(int invoiceId);
+        Task DeleteAsync(int invoiceId);
+        Task DeleteInvoicePricesAsync(int invoiceId);
     }
 }

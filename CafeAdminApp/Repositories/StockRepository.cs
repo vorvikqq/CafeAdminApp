@@ -1,7 +1,9 @@
 ﻿using CafeAdminApp.Data;
 using CafeAdminApp.Models;
 using CafeAdminApp.Repositories.Interfaces;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CafeAdminApp.Repositories
 {
@@ -65,5 +67,42 @@ namespace CafeAdminApp.Repositories
             return expiredStockItems.Count;
         }
 
+        /// <summary>
+        /// Додати продукти до Стоку за айді цін
+        /// </summary>
+        /// <param name="priceIds"> айді цін</param>
+        /// <returns></returns>
+        public async Task AddProductsByIds(List<int> priceIds)
+        {
+            var productsWithQuantities = await _context.InvoicePrice
+            .Where(ip => priceIds.Contains(ip.PriceId)) 
+            .Join(_context.Prices, // Join InvoicePrice i Prices
+                  ip => ip.PriceId, // PriceId в InvoicePrice
+                  p => p.PriceId,   // PriceId в Prices
+                  (ip, p) => new   // Створюємо новий об'єкт (результат джойну)
+                  {
+                      ProductId = p.ProductId, // ProductId із таблиці Prices 
+                      Quantity = ip.Quantity  // Quantity із таблиці InvoicePrice
+                  })
+            .ToListAsync();
+
+            foreach (var product in productsWithQuantities)
+            {
+                var stockItem = await _context.Stock.FirstOrDefaultAsync(s => s.ProductId == product.ProductId);
+
+                // Перевірка щоб не можна було додати з одного інвойсу один продукт багато разів.
+                if (stockItem == null)
+                {
+                    _context.Stock.Add(new StockItem
+                    {
+                        ProductId = product.ProductId,
+                        Quantity = product.Quantity,
+                        IsProsrochka = false
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
