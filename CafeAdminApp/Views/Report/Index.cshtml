@@ -16,15 +16,6 @@
 <!-- Форма фільтрації -->
 <form method="post" asp-action="GenerateReport" class="mb-4">
     <div class="row g-3">
-        <div class="col-md-4">
-            <label for="reportPeriod" class="form-label">Оберіть період:</label>
-            <select id="reportPeriod" class="form-control" asp-for="Filter">
-                <option value="day">День</option>
-                <option value="week">Тиждень</option>
-                <option value="month">Місяць</option>
-                <option value="quarter">Квартал</option>
-            </select>
-        </div>
         <div class="col-md-3">
             <label for="startDate" class="form-label">Дата початку:</label>
             <input type="date" id="startDate" class="form-control" asp-for="StartDate" />
