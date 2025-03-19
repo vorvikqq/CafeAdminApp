@@ -19,9 +19,23 @@ namespace CafeAdminApp.Repositories
             return await _context.Invoices.Include(i => i.InvoicePrices).ToListAsync();
         }
 
+        public async Task<List<Invoice>> GetAllInvoicesAsync()
+        {
+            return await _context.Invoices.ToListAsync();
+        }
+
         public async Task<Invoice?> GetByIdAsync(int id)
         {
             return await _context.Invoices.Include(i => i.InvoicePrices).FirstOrDefaultAsync(i => i.InvoiceId == id);
         }
+
+        public async Task<List<int>> GetAllPricesForInvoiceAsync(int invoiceId)
+        {
+            return await _context.InvoicePrice
+                .Where(ip => ip.InvoiceId == invoiceId)
+                .Select(ip => ip.PriceId)
+                .ToListAsync();
+        }
+
     }
 }

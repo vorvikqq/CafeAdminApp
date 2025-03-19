@@ -30,5 +30,19 @@ namespace CafeAdminApp.Repositories
                 .Include(p => p.OrderPrices)
                 .FirstOrDefaultAsync(p => p.PriceId == id);
         }
+
+        public async Task<List<InvoiceProductDetails>> GetProductDetailsAsync(List<int> priceIds)
+        {
+            return await _context.Prices
+                .Where(p => priceIds.Contains(p.PriceId))
+                .Select(p => new InvoiceProductDetails
+                {
+                    ProductName = p.Product.ProductName,
+                    Price = p.BoughtPrice,
+                    Quantity = p.InvoicePrices.FirstOrDefault(ip => priceIds.Contains(ip.PriceId)).Quantity
+                })
+                .ToListAsync();
+        }
+
     }
 }

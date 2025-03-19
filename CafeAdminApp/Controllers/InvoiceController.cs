@@ -1,22 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CafeAdminApp.Models;
+using CafeAdminApp.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CafeAdminApp.Controllers
 {
     public class InvoiceController : Controller
     {
-        public IActionResult Index()
+        private IInvoiceRepository _invoiceRepository;
+        private IPriceRepository _priceRepository;
+        public InvoiceController(IInvoiceRepository invoiceRepository, IPriceRepository priceRepository)
         {
-            // TODO: отримуємо інфу про таблицю інвойси, передаємо у вью
-            throw new NotImplementedException();
+            _invoiceRepository = invoiceRepository;
+            _priceRepository = priceRepository;
         }
 
-        public IActionResult InvoiceDetails(int invoiceId)
+        public async Task<IActionResult> Index()
         {
-            // TODO: отримуємо інфу про продукт для цього інвойсу з таких таблиць:
-            // Назва:Price->Product; Ціна:Price; Кількість:Price->Product.
-            // Формуємо модель з цих трьох приколів та передаємо у вью
-            // (Можна зробити кастомну модель для цього у папці Data) 
-            throw new NotImplementedException();
+            var invoices = await _invoiceRepository.GetAllInvoicesAsync();
+            return View("Index", invoices);
+        }
+
+        public async Task<IActionResult> InvoiceDetails(int invoiceId)
+        {
+            var priceIds = await _invoiceRepository.GetAllPricesForInvoiceAsync(invoiceId);
+
+            if (priceIds == null || !priceIds.Any())
+            {
+                ViewData["Message"] = "Немає товарів у цьому інвойсі.";
+                return View(new List<InvoiceProductDetails>());
+            }
+
+            // Отримуємо деталі продуктів (назва, ціна, кількість)
+            var productDetails = await _priceRepository.GetProductDetailsAsync(priceIds);
+            
+            ViewData["InvoiceId"] = invoiceId;
+
+            return View(productDetails);
         }
 
         [HttpPost]
