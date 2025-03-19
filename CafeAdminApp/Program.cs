@@ -22,6 +22,8 @@ builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<IPriceRepository, PriceRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+
 
 
 
