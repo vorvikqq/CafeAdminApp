@@ -14,22 +14,7 @@
 <h1 class="mb-4">Звіти</h1>
 
 <!-- Форма фільтрації -->
-<<<<<<< Updated upstream
-<form method="post" asp-action="GenerateReport" class="mb-4">
-    <div class="row g-3">
-        <div class="col-md-4">
-            <label for="reportPeriod" class="form-label">Оберіть період:</label>
-            <select id="reportPeriod" class="form-control" asp-for="Filter">
-                <option value="day">День</option>
-                <option value="week">Тиждень</option>
-                <option value="month">Місяць</option>
-                <option value="quarter">Квартал</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="startDate" class="form-label">Дата початку:</label>
-            <input type="date" id="startDate" class="form-control" asp-for="StartDate" />
-=======
+
 <div class="report_form_layout">
     <form method="post" asp-action="GenerateReport" class="mb-4 report_form_layout_item_1">
         <div class="row g-3">
@@ -44,7 +29,6 @@
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary w-100">Згенерувати</button>
             </div>
->>>>>>> Stashed changes
         </div>
     </form>
     <form method="get" asp-action="ExportToExcel" class="mb-4 report_form_layout_item_2">
