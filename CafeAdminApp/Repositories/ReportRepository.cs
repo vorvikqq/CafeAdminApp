@@ -1,5 +1,4 @@
 ﻿using CafeAdminApp.Data;
-using CafeAdminApp.Models;
 using CafeAdminApp.Models.DtoModel;
 using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,17 +15,24 @@ namespace CafeAdminApp.Repositories
         }
 
         // Звіт по прибутку
-        public async Task<decimal> GetNetProfitReport(DateTime startDate, DateTime endDate)
+        public async Task<List<NetProfitDto>> GetNetProfitReport(DateTime startDate, DateTime endDate)
         {
-            var netProfit = await _context.Orders
+            var profitDetails = await _context.Orders
                 .Where(o => o.OrderStatus == true && o.OrderDate >= startDate && o.OrderDate <= endDate)
                 .Join(_context.OrderPrice, o => o.OrderId, op => op.OrderId, (o, op) => new { o, op })
-                .Join(_context.Prices, temp => temp.op.PriceId, p => p.PriceId, (temp, p) =>
-                    temp.op.Quantity * (p.SellPrice - p.BoughtPrice))
-                .SumAsync();
+                .Join(_context.Prices, temp => temp.op.PriceId, p => p.PriceId, (temp, p) => new NetProfitDto
+                {
+                    ProductName = p.Product.ProductName,
+                    QuantitySold = temp.op.Quantity,
+                    BoughtPrice = (decimal)p.BoughtPrice,
+                    SellPrice = (decimal)p.SellPrice,
+                    TotalProfit = (decimal)(temp.op.Quantity * (p.SellPrice - p.BoughtPrice))
+                })
+                .ToListAsync();
 
-            return (decimal)netProfit;
+            return profitDetails;
         }
+
 
         // Звіт про найбільш продавані товари
         public async Task<List<TopSellingProductDto>> GetTopSellingProducts(DateTime startDate, DateTime endDate)

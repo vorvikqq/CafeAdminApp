@@ -25,6 +25,8 @@ namespace CafeAdminApp.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
+            ViewData["ActivePage"] = "ManageProducts";
+
             return View(await _productRepo.GetAllAsync());
         }
 

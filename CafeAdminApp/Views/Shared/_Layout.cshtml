@@ -23,8 +23,24 @@
                                 <a class="nav-link @(ViewData["ActivePage"] as string == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link @(ViewData["ActivePage"] as string == "Privacy" ? "active" : "")"
-                                   asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "ManageProducts" ? "active" : "")"
+                                   asp-controller="Products" asp-action="Index">Manage Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "ProductExpiration" ? "active" : "")"
+                                   asp-controller="ProductExpiration" asp-action="Index">Списання товарів</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "Invoice" ? "active" : "")"
+                                   asp-controller="Invoice" asp-action="Index">Прийняття товару на баланс</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "StockItems" ? "active" : "")"
+                                   asp-controller="StockItems" asp-action="Index">Товари</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "Report" ? "active" : "")"
+                                   asp-controller="Report" asp-action="Index">Звіти</a>
                             </li>
                         </ul>
                     </div>

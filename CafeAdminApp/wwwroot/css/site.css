@@ -38,3 +38,17 @@ img {
     background-color: #c3e6cb;
     color: #155724;
 }
+
+.report_form_layout{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.report_form_layout_item_1{
+    flex: 1 1 80%;
+}
+
+.report_form_layout_item_2 {
+    flex: 1 1 20%;
+}

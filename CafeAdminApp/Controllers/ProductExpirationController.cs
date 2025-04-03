@@ -16,6 +16,8 @@ namespace CafeAdminApp.Controllers
 
         public IActionResult Index()
         {
+            ViewData["ActivePage"] = "ProductExpiration";
+
             return View();
         }
 

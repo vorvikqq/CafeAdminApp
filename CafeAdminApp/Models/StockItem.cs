@@ -4,18 +4,20 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CafeAdminApp.Models
 {
-    [Table("Stock")]
+    [Table("stock")]
     public class StockItem
     {
         [Key]
-        [Column("StockID")]
+        [Column("stockid")]
         public int StockId { get; set; } = default!;
 
-        [Column("ProductID")]
+        [Column("productid")]
         public int ProductId { get; set; }
-        
+ 
+        [Column("quantity")]
         public int Quantity { get; set; }
-        
+
+        [Column("isprosrochka")]
         public bool IsProsrochka { get; set; }
 
 

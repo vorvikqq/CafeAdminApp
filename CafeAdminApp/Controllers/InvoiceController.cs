@@ -26,6 +26,8 @@ namespace CafeAdminApp.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
+            ViewData["ActivePage"] = "Invoice";
+
             var invoices = await _invoiceRepository.GetAllInvoicesAsync();
             return View("Index", invoices);
         }

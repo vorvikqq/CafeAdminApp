@@ -23,6 +23,8 @@ namespace CafeAdminApp.Controllers
         // GET: StockItems
         public async Task<IActionResult> Index()
         {
+            ViewData["ActivePage"] = "StockItems";
+
             return View(await _stockRepo.GetAllAsync());
         }
 
