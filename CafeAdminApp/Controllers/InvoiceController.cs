@@ -1,4 +1,4 @@
-﻿using CafeAdminApp.Models;
+﻿using CafeAdminApp.Models.ViewModels;
 using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
