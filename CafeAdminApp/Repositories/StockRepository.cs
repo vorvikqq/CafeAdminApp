@@ -104,5 +104,46 @@ namespace CafeAdminApp.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddProductsByIdsFromOrder(List<int> priceIds, int orderId)
+        {
+            var productsWithQuantities = await _context.OrderPrice
+            .Where(op => priceIds.Contains(op.PriceId) && op.OrderId == orderId)
+            .Join(_context.Prices, 
+                  op => op.PriceId, 
+                  p => p.PriceId, 
+                  (op, p) => new  
+                  {
+                      ProductId = p.ProductId,  
+                      Quantity = op.Quantity  
+                  })
+            .ToListAsync();
+
+            var productIds = productsWithQuantities.Select(p => p.ProductId).ToList();
+            var existingStockItems = await _context.Stock
+                .Where(s => productIds.Contains(s.ProductId))
+                .ToListAsync();
+
+            foreach (var product in productsWithQuantities)
+            {
+                var stockItem = existingStockItems.FirstOrDefault(s => s.ProductId == product.ProductId);
+
+                if (stockItem == null)
+                {
+                    _context.Stock.Add(new StockItem
+                    {
+                        ProductId = product.ProductId,
+                        Quantity = product.Quantity,
+                        IsProsrochka = false
+                    });
+                }
+                else 
+                {
+                    stockItem.Quantity += product.Quantity;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

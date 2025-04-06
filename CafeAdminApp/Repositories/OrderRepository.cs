@@ -36,5 +36,25 @@ namespace CafeAdminApp.Repositories
             return await _context.OrderPrice.Where(op => op.OrderId == orderId).Select(op => op.PriceId).ToListAsync();
         }
 
+        public async Task UpdateOrderStatus(int orderId, bool status)
+        {
+            await _context.Orders
+                .Where(o => o.OrderId == orderId)
+                .ExecuteUpdateAsync(o => o.SetProperty(x => x.OrderStatus, status));
+        }
+
+        public async Task DeleteOrderPricesAsync(int orderId)
+        {
+           await _context.OrderPrice
+                .Where(op => op.OrderId == orderId)
+                .ExecuteDeleteAsync();
+        }
+
+        public async Task DeleteAsync(int orderId)
+        {
+           await _context.Orders
+                .Where(o => o.OrderId == orderId)
+                .ExecuteDeleteAsync();
+        }
     }
 }

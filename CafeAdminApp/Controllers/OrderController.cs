@@ -10,10 +10,16 @@ namespace CafeAdminApp.Controllers
     {
         private IOrderRepository _orderRepository;
         private IPriceRepository _priceRepository;
-        public OrderController(IOrderRepository orderRepository, IPriceRepository priceRepository)
+        private ICheckRepository _checkRepository;
+        private IStockRepository _stockRepository;
+        private IProductRepository _productRepository;
+        public OrderController(IOrderRepository orderRepository, IPriceRepository priceRepository, ICheckRepository checkRepository, IStockRepository stockRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
             _priceRepository = priceRepository;
+            _checkRepository = checkRepository;
+            _stockRepository = stockRepository;
+            _productRepository = productRepository;
         }
         public async Task<IActionResult> Index()
         {
@@ -42,28 +48,35 @@ namespace CafeAdminApp.Controllers
 
         public async Task<IActionResult> AcceptOrder(int orderId)
         {
-            // оновляємо статус замовлення на тру
-            // додаєємо в таблицю чек під'єднання до таблиці ордер по айді
+            await _orderRepository.UpdateOrderStatus(orderId, true);
+            var check = new Check()
+            {
+                OrderId = orderId,
+                SaleDate = DateTime.Now
+            };
+            await _checkRepository.AddAsync(check);
 
-            
-            ViewData["Message"] = "unfinished/ Замовлення прийнято. Чек успішно додано";
+            ViewData["Message"] = "Замовлення прийнято. Чек успішно додано";
             var orders = await _orderRepository.GetAllUnconfirmedAsync();
             return View("Index", orders);
 
         }
 
-        /// <summary>
-        /// НЕ додавати продукти в Stock, видалити продукти які були у інвойсів, видалити інформацію про інвойс
-        /// </summary>
-        /// <param name="invoiceId"> інвойс продукти якого видаляються </param>
-        /// <returns></returns>
         public async Task<IActionResult> DiscardOrder(int orderId)
         {
-            // додаємо в сток всі продукти із ордер прайс
-            // видаляємо всі записи в ордер прайс
-            // видаляємо всі записи в ордер (1)
+            // повертаємо продукти в Stock
+            var priceIds = await _orderRepository.GetAllPricesForOrderAsync(orderId);
+            await _stockRepository.AddProductsByIdsFromOrder(priceIds, orderId);
 
-            ViewData["Message"] = "unfinished/ Замовлення успішно відхилено.";
+            var controller = new ProductExpirationController(_stockRepository, _productRepository);
+            var result = await controller.SetExpirationFlag();
+
+            // видаляємо всі записи в ордер прайс
+            await _orderRepository.DeleteOrderPricesAsync(orderId);
+            // видаляємо всі записи в ордер (1)
+            await _orderRepository.DeleteAsync(orderId);
+
+            ViewData["Message"] = "Замовлення успішно відхилено.";
             var orders = await _orderRepository.GetAllUnconfirmedAsync();
             return View("Index", orders);
         }
