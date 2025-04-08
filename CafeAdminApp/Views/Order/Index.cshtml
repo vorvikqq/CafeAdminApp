@@ -1,0 +1,40 @@
+﻿@model List<CafeAdminApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Прийняття замовлень";
+}
+
+<h1 class="text-center">Прийняття замовлень</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-success">
+        <p class="text-center">@ViewData["Message"]</p>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Замовлення</th>
+            <th>Дата створення</th>
+            <th>Деталі</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>
+                    <a asp-action="OrderDetails" asp-route-orderId="@order.OrderId" class="btn btn-primary">Переглянути</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,16 +1,16 @@
-﻿@model List<CafeAdminApp.Models.ViewModels.InvoiceProductDetails>
+﻿@model List<CafeAdminApp.Models.ViewModels.OrderDetails>
 
-<h2 class="text-center">Деталі інвойсу "ID: @ViewData["InvoiceId"]"</h2>
+<h2 class="text-center">Деталі замовлення "ID: @ViewData["OrderId"]"</h2>
 
 @if (!Model.Any())
 {
     @if (ViewData["Message"] != null)
     {
         <p class="text-center">@ViewData["Message"]</p>
-        if (ViewData["Message"] == "Немає товарів у цьому інвойсі.")
+        if (ViewData["Message"] == "Немає товарів у цьому замовленні.")
         {
             <div class="text-center mt-3">
-                <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardInvoice()">Відхилити інвойс</button>
+                <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardOrder()">Відхилити замовлення</button>
             </div>
         }
     }
@@ -28,12 +28,12 @@ else
         </thead>
         <tbody>
             @{
-                double totalInvoicePrice = 0;
+                double totalOrderPrice = 0;
             }
             @foreach (var item in Model)
             {
                 var productTotal = item.Price * item.Quantity;
-                totalInvoicePrice += productTotal;
+                totalOrderPrice += productTotal;
                 <tr>
                     <td>@item.ProductName</td>
                     <td>@item.Price</td>
@@ -44,21 +44,21 @@ else
         </tbody>
     </table>
 
-    <h4 class="text-right">Загальна вартість товарів у інвойсі: @totalInvoicePrice ₴</h4>
+    <h4 class="text-right">До сплати: @totalOrderPrice ₴</h4>
 
     <div class="text-center mt-3">
-        <button class="btn" style="background-color: #28a745; color: white;" onclick="acceptInvoice()">Підтвердити інвойс</button>
-        <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardInvoice()">Відхилити інвойс</button>
+        <button class="btn" style="background-color: #28a745; color: white;" onclick="acceptOrder()">Підтвердити замовлення</button>
+        <button class="btn" style="background-color: #dc3545; color: white;" onclick="discardOrder()">Відхилити замовлення</button>
     </div>
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function acceptInvoice() {
+    function acceptOrder() {
         Swal.fire({
             title: 'Підтвердження',
-            text: 'Ви впевнені, що хочете прийняти цей інвойс?',
+            text: 'Ви впевнені, що хочете прийняти це замовлення?',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Так',
@@ -67,15 +67,15 @@ else
             cancelButtonColor: '#dc3545',   // червоний
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "@Url.Action("AcceptInvoice", "Invoice", new { invoiceId = ViewData["InvoiceId"] })";
+                window.location.href = "@Url.Action("AcceptOrder", "Order", new { orderId = ViewData["OrderId"] })";
             }
         });
     }
 
-    function discardInvoice() {
+    function discardOrder() {
         Swal.fire({
-            title: 'Відхилити інвойс',
-            text: 'Ви впевнені, що хочете відхилити цей інвойс?',
+            title: 'Відхилити замовлення',
+            text: 'Ви впевнені, що хочете відхилити це замовлення?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Так',
@@ -84,7 +84,7 @@ else
             cancelButtonColor: '#dc3545',   // червоний
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "@Url.Action("DiscardInvoice", "Invoice", new { invoiceId = ViewData["InvoiceId"] })";
+                window.location.href = "@Url.Action("DiscardOrder", "Order", new { orderId = ViewData["OrderId"] })";
             }
         });
     }

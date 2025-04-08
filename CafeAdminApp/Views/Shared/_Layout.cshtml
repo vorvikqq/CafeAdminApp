@@ -23,6 +23,10 @@
                                 <a class="nav-link @(ViewData["ActivePage"] as string == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link @(ViewData["ActivePage"] as string == "Orders" ? "active" : "")"
+                                   asp-controller="Order" asp-action="Index">Прийняття замовлень</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link @(ViewData["ActivePage"] as string == "ManageProducts" ? "active" : "")"
                                    asp-controller="Products" asp-action="Index">Manage Products</a>
                             </li>

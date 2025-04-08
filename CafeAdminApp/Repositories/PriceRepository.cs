@@ -1,5 +1,6 @@
 ﻿using CafeAdminApp.Data;
 using CafeAdminApp.Models;
+using CafeAdminApp.Models.ViewModels;
 using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,19 @@ namespace CafeAdminApp.Repositories
                     ProductName = p.Product.ProductName,
                     Price = p.BoughtPrice,
                     Quantity = p.InvoicePrices.FirstOrDefault(ip => priceIds.Contains(ip.PriceId)).Quantity
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<OrderDetails>> GetOrderDetailsAsync(List<int> priceIds, int orderId)
+        {
+            return await _context.Prices
+                .Where(p => priceIds.Contains(p.PriceId))
+                .Select(p => new OrderDetails
+                {
+                    ProductName = p.Product.ProductName,
+                    Price = p.SellPrice,
+                    Quantity = p.OrderPrices.FirstOrDefault(op => op.OrderId == orderId && priceIds.Contains(op.PriceId)).Quantity
                 })
                 .ToListAsync();
         }

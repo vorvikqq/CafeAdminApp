@@ -1,4 +1,4 @@
-﻿namespace CafeAdminApp.Models
+﻿namespace CafeAdminApp.Models.ViewModels
 {
     /// <summary>
     /// Модель для зберігання данних які потрібні для представлення інвойсу
