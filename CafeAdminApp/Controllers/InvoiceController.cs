@@ -1,8 +1,6 @@
 ﻿using CafeAdminApp.Models.ViewModels;
 using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
 
 namespace CafeAdminApp.Controllers
 {
@@ -12,6 +10,14 @@ namespace CafeAdminApp.Controllers
         private IPriceRepository _priceRepository;
         private IStockRepository _stockRepository;
         private IProductRepository _productRepository;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvoiceController"/> class.
+        /// </summary>
+        /// <param name="invoiceRepository">Repository for handling invoice-related data.</param>
+        /// <param name="priceRepository">Repository for handling price-related data.</param>
+        /// <param name="stockRepository">Repository for managing stock data.</param>
+        /// <param name="productRepository">Repository for managing product data.</param>
         public InvoiceController(IInvoiceRepository invoiceRepository, IPriceRepository priceRepository, IStockRepository stockRepository, IProductRepository productRepository)
         {
             _invoiceRepository = invoiceRepository;
@@ -21,9 +27,9 @@ namespace CafeAdminApp.Controllers
         }
 
         /// <summary>
-        /// Отримати всі інвойси
+        /// Retrieves all invoices.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A view displaying all invoices.</returns>
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = "Invoice";
@@ -33,10 +39,10 @@ namespace CafeAdminApp.Controllers
         }
 
         /// <summary>
-        /// Отримати деталі інвойсу 
+        /// Retrieves the details of a specific invoice, including associated products and prices.
         /// </summary>
-        /// <param name="invoiceId"> айді інвойсу деталі продуктів якого потрібно відобразити</param>
-        /// <returns></returns>
+        /// <param name="invoiceId">The ID of the invoice to retrieve details for.</param>
+        /// <returns>A view displaying the product details associated with the invoice.</returns>
         public async Task<IActionResult> InvoiceDetails(int invoiceId)
         {
             var priceIds = await _invoiceRepository.GetAllPricesForInvoiceAsync(invoiceId);
@@ -45,45 +51,43 @@ namespace CafeAdminApp.Controllers
 
             if (priceIds == null || !priceIds.Any())
             {
-                ViewData["Message"] = "Немає товарів у цьому інвойсі.";
+                ViewData["Message"] = "No products in this invoice.";
                 return View(new List<InvoiceProductDetails>());
             }
 
-            // Отримуємо деталі продуктів (назва, ціна, кількість)
+            // Retrieve product details (name, price, quantity)
             var productDetails = await _priceRepository.GetInvoiceProductDetailsAsync(priceIds);
 
             return View(productDetails);
         }
 
         /// <summary>
-        /// Додати інформацію про інвойс в Stock, видалити інформацію про інвойс
+        /// Accepts an invoice by adding its products to the stock and cleaning up invoice data.
         /// </summary>
-        /// <param name="invoiceId"> інвойс з яким працюємо</param>
-        /// <returns></returns>
+        /// <param name="invoiceId">The ID of the invoice to accept.</param>
+        /// <returns>A view displaying all invoices after processing the accepted invoice.</returns>
         public async Task<IActionResult> AcceptInvoice(int invoiceId)
         {
             var priceIds = await _invoiceRepository.GetAllPricesForInvoiceAsync(invoiceId);
             if (priceIds == null || !priceIds.Any())
             {
-                ViewData["Message"] = "Помилка: В Таблиці Ціни немає ID продуктів з інвойсу";
+                ViewData["Message"] = "Error: No product IDs found in the Price table for this invoice.";
                 return View("InvoiceDetails", new List<InvoiceProductDetails>());
             }
 
             await _stockRepository.AddProductsByIds(priceIds);
-
             await CleanUpInvoices(invoiceId);
 
-            ViewData["Message"] = "Інвойс успішно підтверджено та продукти додано в Stock.";
+            ViewData["Message"] = "Invoice successfully accepted, and products added to Stock.";
             var invoices = await _invoiceRepository.GetAllInvoicesAsync();
             return View("Index", invoices);
-
         }
 
         /// <summary>
-        /// НЕ додавати продукти в Stock, видалити продукти які були у інвойсів, видалити інформацію про інвойс
+        /// Discards an invoice by removing its products from the stock and deleting invoice-related data.
         /// </summary>
-        /// <param name="invoiceId"> інвойс продукти якого видаляються </param>
-        /// <returns></returns>
+        /// <param name="invoiceId">The ID of the invoice to discard.</param>
+        /// <returns>A view displaying all invoices after processing the discarded invoice.</returns>
         public async Task<IActionResult> DiscardInvoice(int invoiceId)
         {
             var priceIds = await _invoiceRepository.GetAllPricesForInvoiceAsync(invoiceId);
@@ -92,19 +96,20 @@ namespace CafeAdminApp.Controllers
             await _priceRepository.DeleteManyByIdsAsync(priceIds);
             await _productRepository.DeleteManyByIdsAsync(productIds);
 
-            ViewData["Message"] = "Інвойс успішно відхилено.";
+            ViewData["Message"] = "Invoice successfully discarded.";
             var invoices = await _invoiceRepository.GetAllInvoicesAsync();
             return View("Index", invoices);
         }
 
         /// <summary>
-        /// Видалення інформації про інвойс, інвойсПрайс
+        /// Cleans up invoice-related data by deleting the invoice and its associated prices.
         /// </summary>
-        /// <param name="invoiceId"></param>
+        /// <param name="invoiceId">The ID of the invoice to delete.</param>
         private async Task CleanUpInvoices(int invoiceId)
         {
             await _invoiceRepository.DeleteInvoicePricesAsync(invoiceId);
             await _invoiceRepository.DeleteAsync(invoiceId);
         }
     }
+
 }

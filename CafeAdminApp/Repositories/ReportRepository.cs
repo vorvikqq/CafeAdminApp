@@ -5,16 +5,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeAdminApp.Repositories
 {
+    /// <summary>
+    /// Repository for generating various reports related to sales, stock, and profits.
+    /// </summary>
     public class ReportRepository : IReportRepository
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReportRepository"/> class.
+        /// </summary>
+        /// <param name="context">The application database context.</param>
         public ReportRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Звіт по прибутку
+        /// <summary>
+        /// Generates a report for net profit between the given start and end dates.
+        /// </summary>
+        /// <param name="startDate">The start date for the report period.</param>
+        /// <param name="endDate">The end date for the report period.</param>
+        /// <returns>A list of <see cref="NetProfitDto"/> containing profit details for the specified period.</returns>
         public async Task<List<NetProfitDto>> GetNetProfitReport(DateTime startDate, DateTime endDate)
         {
             var profitDetails = await _context.Orders
@@ -33,8 +45,12 @@ namespace CafeAdminApp.Repositories
             return profitDetails;
         }
 
-
-        // Звіт про найбільш продавані товари
+        /// <summary>
+        /// Generates a report for the top-selling products between the given start and end dates.
+        /// </summary>
+        /// <param name="startDate">The start date for the report period.</param>
+        /// <param name="endDate">The end date for the report period.</param>
+        /// <returns>A list of <see cref="TopSellingProductDto"/> containing top-selling products for the specified period.</returns>
         public async Task<List<TopSellingProductDto>> GetTopSellingProducts(DateTime startDate, DateTime endDate)
         {
             var products = await _context.Orders
@@ -61,7 +77,10 @@ namespace CafeAdminApp.Repositories
             return products;
         }
 
-        // Звіт про наявність товарів на складі
+        /// <summary>
+        /// Generates a report for the current stock availability.
+        /// </summary>
+        /// <returns>A list of <see cref="StockItemDto"/> containing stock items and their quantities.</returns>
         public async Task<List<StockItemDto>> GetStockReport()
         {
             var stock = await _context.Stock
@@ -80,28 +99,29 @@ namespace CafeAdminApp.Repositories
             return stock;
         }
 
-
-        // Звіт про баланс зіпсованих товарів
+        /// <summary>
+        /// Generates a report for spoiled goods (expired items).
+        /// </summary>
+        /// <returns>A list of <see cref="SpoiledGoodsDto"/> containing information about spoiled goods.</returns>
         public async Task<List<SpoiledGoodsDto>> GetSpoiledProductsReport()
         {
             var spoiledProducts = await (
-        from s in _context.Stock
-        where s.IsProsrochka
-        join pr in _context.Prices on s.ProductId equals pr.ProductId into priceGroup
-        from pr in priceGroup.OrderByDescending(p => p.Date).Take(1).DefaultIfEmpty()
-        join p in _context.Products on s.ProductId equals p.ProductId
-        group new { s, pr } by new { s.ProductId, p.ProductName } into g
-        select new SpoiledGoodsDto
-        {
-            ProductName = g.Key.ProductName,
-            TotalQuantity = g.Sum(x => x.s.Quantity),
-            TotalCost = (decimal)g.Sum(x => x.s.Quantity * (x.pr != null ? x.pr.BoughtPrice : 0))
-        }
-    ).OrderByDescending(sp => sp.TotalCost)
-    .ToListAsync();
+                from s in _context.Stock
+                where s.IsProsrochka
+                join pr in _context.Prices on s.ProductId equals pr.ProductId into priceGroup
+                from pr in priceGroup.OrderByDescending(p => p.Date).Take(1).DefaultIfEmpty()
+                join p in _context.Products on s.ProductId equals p.ProductId
+                group new { s, pr } by new { s.ProductId, p.ProductName } into g
+                select new SpoiledGoodsDto
+                {
+                    ProductName = g.Key.ProductName,
+                    TotalQuantity = g.Sum(x => x.s.Quantity),
+                    TotalCost = (decimal)g.Sum(x => x.s.Quantity * (x.pr != null ? x.pr.BoughtPrice : 0))
+                }
+            ).OrderByDescending(sp => sp.TotalCost)
+            .ToListAsync();
 
             return spoiledProducts;
         }
     }
-
 }

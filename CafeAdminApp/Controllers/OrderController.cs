@@ -1,6 +1,5 @@
 ﻿using CafeAdminApp.Models;
 using CafeAdminApp.Models.ViewModels;
-using CafeAdminApp.Repositories;
 using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +12,15 @@ namespace CafeAdminApp.Controllers
         private ICheckRepository _checkRepository;
         private IStockRepository _stockRepository;
         private IProductRepository _productRepository;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderController"/> class.
+        /// </summary>
+        /// <param name="orderRepository">Repository for handling order-related operations.</param>
+        /// <param name="priceRepository">Repository for handling price-related operations.</param>
+        /// <param name="checkRepository">Repository for managing sales checks.</param>
+        /// <param name="stockRepository">Repository for managing stock data.</param>
+        /// <param name="productRepository">Repository for managing product data.</param>
         public OrderController(IOrderRepository orderRepository, IPriceRepository priceRepository, ICheckRepository checkRepository, IStockRepository stockRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
@@ -21,6 +29,11 @@ namespace CafeAdminApp.Controllers
             _stockRepository = stockRepository;
             _productRepository = productRepository;
         }
+
+        /// <summary>
+        /// Displays all unconfirmed orders.
+        /// </summary>
+        /// <returns>A view containing a list of unconfirmed orders.</returns>
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = "Orders";
@@ -29,6 +42,11 @@ namespace CafeAdminApp.Controllers
             return View("Index", orders);
         }
 
+        /// <summary>
+        /// Displays detailed information for a specific order, including products.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to display details for.</param>
+        /// <returns>A view with order product details.</returns>
         public async Task<IActionResult> OrderDetails(int orderId)
         {
             var priceIds = await _orderRepository.GetAllPricesForOrderAsync(orderId);
@@ -37,7 +55,7 @@ namespace CafeAdminApp.Controllers
 
             if (priceIds == null || !priceIds.Any())
             {
-                ViewData["Message"] = "Немає товарів у цьому замовленні.";
+                ViewData["Message"] = "No products found for this order.";
                 return View(new List<OrderDetails>());
             }
 
@@ -46,6 +64,11 @@ namespace CafeAdminApp.Controllers
             return View(productDetails);
         }
 
+        /// <summary>
+        /// Accepts an order by updating its status and generating a sales check.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to accept.</param>
+        /// <returns>A view displaying updated unconfirmed orders.</returns>
         public async Task<IActionResult> AcceptOrder(int orderId)
         {
             await _orderRepository.UpdateOrderStatus(orderId, true);
@@ -56,29 +79,31 @@ namespace CafeAdminApp.Controllers
             };
             await _checkRepository.AddAsync(check);
 
-            ViewData["Message"] = "Замовлення прийнято. Чек успішно додано";
+            ViewData["Message"] = "Order accepted. Sales check successfully created.";
             var orders = await _orderRepository.GetAllUnconfirmedAsync();
             return View("Index", orders);
-
         }
 
+        /// <summary>
+        /// Discards an order by restoring its products to stock and deleting all associated records.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to discard.</param>
+        /// <returns>A view displaying updated unconfirmed orders.</returns>
         public async Task<IActionResult> DiscardOrder(int orderId)
         {
-            // повертаємо продукти в Stock
             var priceIds = await _orderRepository.GetAllPricesForOrderAsync(orderId);
             await _stockRepository.AddProductsByIdsFromOrder(priceIds, orderId);
 
             var controller = new ProductExpirationController(_stockRepository, _productRepository);
             var result = await controller.SetExpirationFlag();
 
-            // видаляємо всі записи в ордер прайс
             await _orderRepository.DeleteOrderPricesAsync(orderId);
-            // видаляємо всі записи в ордер (1)
             await _orderRepository.DeleteAsync(orderId);
 
-            ViewData["Message"] = "Замовлення успішно відхилено.";
+            ViewData["Message"] = "Order successfully discarded.";
             var orders = await _orderRepository.GetAllUnconfirmedAsync();
             return View("Index", orders);
         }
     }
+
 }

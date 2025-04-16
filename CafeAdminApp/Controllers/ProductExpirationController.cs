@@ -1,6 +1,5 @@
 ﻿using CafeAdminApp.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CafeAdminApp.Controllers
 {
@@ -8,12 +7,22 @@ namespace CafeAdminApp.Controllers
     {
         private readonly IStockRepository _stockRepo;
         private readonly IProductRepository _prodRepo;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductExpirationController"/> class.
+        /// </summary>
+        /// <param name="stockRepository">Repository for stock operations.</param>
+        /// <param name="productRepository">Repository for product data operations.</param>
         public ProductExpirationController(IStockRepository stockRepository, IProductRepository productRepository)
         {
             _stockRepo = stockRepository;
             _prodRepo = productRepository;
         }
 
+        /// <summary>
+        /// Displays the default view for product expiration management.
+        /// </summary>
+        /// <returns>The view for the product expiration page.</returns>
         public IActionResult Index()
         {
             ViewData["ActivePage"] = "ProductExpiration";
@@ -22,9 +31,9 @@ namespace CafeAdminApp.Controllers
         }
 
         /// <summary>
-        /// Списання продуктів: Змінити isProsporchka на true для продуктів, які просрочені    
+        /// Marks expired products by setting the IsProsporchka flag to true.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The result view with a message about the number of expired products updated.</returns>
         [HttpPost]
         public async Task<IActionResult> SetExpirationFlag()
         {
@@ -32,7 +41,7 @@ namespace CafeAdminApp.Controllers
 
             if (!expiredProducts.Any())
             {
-                ViewData["Message"] = "Немає просрочених продуктів.";
+                ViewData["Message"] = "No expired products found.";
                 ViewData["Count"] = 0;
                 return View("Index");
             }
@@ -41,7 +50,7 @@ namespace CafeAdminApp.Controllers
 
             var expiredCount = await _stockRepo.SetExpiredProductsAsync(expiredProductIds);
 
-            ViewData["Message"] = $"Списано {expiredCount} продуктів.";
+            ViewData["Message"] = $"Marked {expiredCount} products as expired.";
             ViewData["Count"] = expiredCount;
             return View("Index");
         }
